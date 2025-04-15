@@ -1,0 +1,6 @@
+load_from:
+  - python_package:
+      package_name: quickstart_etl
+      working_directory: example_etl
+      location_name: quickstart_etl
+
