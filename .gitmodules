@@ -1,3 +1,4 @@
 [submodule "nba_etl"]
 	path = nba_etl
 	url = https://github.com/protimroy/nba_etl.git
+	branch = master
