@@ -2,3 +2,6 @@
 	path = nba_etl
 	url = https://github.com/protimroy/nba_etl.git
 	branch = master
+[submodule "gammaedge"]
+	path = gammaedge
+	url = https://github.com/protimroy/gammaedge.git
