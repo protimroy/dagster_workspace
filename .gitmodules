@@ -5,3 +5,6 @@
 [submodule "gammaedge"]
 	path = gammaedge
 	url = https://github.com/protimroy/gammaedge.git
+[submodule "nfl_analytics"]
+	path = nfl_analytics
+	url = https://github.com/protimroy/nfl_analytics.git

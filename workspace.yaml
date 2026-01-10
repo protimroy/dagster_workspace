@@ -1,4 +1,11 @@
 load_from:
   - python_package:
-      module_name: nba_etl
-      attribute: definitions
+    module_name: nba_etl
+    attribute: definitions
+  - python_package:
+    module_name: gammaedge
+    attribute: defs
+  - python_package:
+    module_name: nfl_analytics
+    attribute: defs
+  
