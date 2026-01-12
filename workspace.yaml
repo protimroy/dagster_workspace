@@ -2,4 +2,4 @@ load_from:
   - python_package:
       package_name: nfl_etl
       attribute: defs
-  
+      working_directory: nfl_etl
