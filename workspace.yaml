@@ -1,5 +1,5 @@
 load_from:
   - python_module:
       module_name: nfl_etl
-      working_directory: nfl_etl
+      working_directory: .
       attribute: defs
