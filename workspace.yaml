@@ -1,4 +1,5 @@
 load_from:
-  - python_file:
-      relative_path: nfl_etl/__init__.py
+  - python_module:
+      module_name: nfl_etl
+      working_directory: nfl_etl
       attribute: defs
