@@ -1,3 +1,6 @@
 [submodule "nfl_etl"]
 	path = nfl_etl
 	url = https://github.com/protimroy/nfl_etl.git
+[submodule "nhl_etl"]
+	path = nhl_etl
+	url = https://github.com/protimroy/nhl_etl.git
