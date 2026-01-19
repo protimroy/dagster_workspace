@@ -3,10 +3,7 @@ load_from:
       module_name: nfl_etl
       working_directory: .
       attribute: defs
-<<<<<<< Updated upstream
-  
-=======
->>>>>>> Stashed changes
+      
   - python_module:
       module_name: nhl_etl
       working_directory: .
