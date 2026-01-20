@@ -4,3 +4,6 @@
 [submodule "nhl_etl"]
 	path = nhl_etl
 	url = https://github.com/protimroy/nhl_etl.git
+[submodule "weather_toronto_etls"]
+	path = weather_toronto_etls
+	url = https://github.com/protimroy/weather_toroto_etls
