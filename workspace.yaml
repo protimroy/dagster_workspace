@@ -8,3 +8,8 @@ load_from:
       module_name: nhl_etl
       working_directory: .
       attribute: defs
+
+  - python_module:
+      module_name: weather_toronto_etls
+      working_directory: .
+      attribute: defs
