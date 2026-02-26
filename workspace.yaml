@@ -4,10 +4,10 @@ load_from:
       #working_directory: .
       #attribute: defs
       
-  #- python_module:
-      #module_name: nhl_etl
-      #working_directory: .
-      #attribute: defs
+  - python_module:
+      module_name: nhl_etl
+      working_directory: .
+      attribute: defs
 
   - python_module:
       module_name: nba_etl
