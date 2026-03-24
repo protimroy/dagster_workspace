@@ -10,3 +10,6 @@
 [submodule "nba_etl"]
 	path = nba_etl
 	url = https://github.com/protimroy/nba_etl.git
+[submodule "mlb_etl"]
+	path = mlb_etl
+	url = https://github.com/protimroy/mlb_etl.git
