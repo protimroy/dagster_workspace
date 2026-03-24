@@ -6,9 +6,10 @@ Central workspace for Dagster-powered sports analytics and weather data pipeline
 
 | Submodule | Database | Status | Description |
 |-----------|----------|--------|-------------|
+| [**mlb_etl**](./mlb_etl/) | `mlb_research` | Active | MLB three-stage pipeline (live → intermediary → historical), Statcast, Originator analytics engine |
 | [**nba_etl**](./nba_etl/) | `nba_research` | Active | NBA player stats ingestion, rolling feature computation, schedule/injury tracking |
-| [**nfl_etl**](./nfl_etl/) | `nfl_analytics_dev` | Active | NFL historical data, live schedule/weather/injury/odds, game projections |
-| [**nhl_etl**](./nhl_etl/) | — | In progress | NHL game data and stats |
+| [**nfl_etl**](./nfl_etl/) | `nfl_analytics_dev` | Experimental | NFL historical data, live schedule/weather/injury/odds, game projections |
+| [**nhl_etl**](./nhl_etl/) | `nhl_research` | Active | NHL game data and stats |
 | [**weather_toronto_etls**](./weather_toronto_etls/) | — | Active | Toronto Pearson Airport weather observations and NWP model data |
 
 ## Quick Start
@@ -35,23 +36,46 @@ uv run dagster dev
                           dagster_workspace/
                           ├── workspace.yaml
                           │
-  ┌───────────────────────┼───────────────────────┬──────────────────────┐
-  │                       │                       │                      │
-  nba_etl/          nfl_etl/              nhl_etl/         weather_toronto_etls/
-  │                       │                       │                      │
-  │  NBA Stats API        │  NFLVerse             │  NHL API             │  Environment Canada
-  │  → staging.*          │  ESPN / Odds API      │  → staging.*         │  → observations
-  │  → projections.*      │  → stg_* / dim_*      │                      │  → nwp forecasts
-  │  → features           │  → fact_* / agg_*     │                      │
-  │                       │                       │                      │
-  └───────┬───────────────┴───────────┬───────────┴──────────────────────┘
-          │                           │
-          ▼                           ▼
-     PostgreSQL (100.68.208.24)    Dagster Daemon (100.103.143.89)
-     ├── nba_research                 Schedules, sensors, runs
-     ├── nfl_analytics_dev
-     └── ...
+  ┌──────────┬────────────┼───────────────────────┬──────────────────────┐
+  │          │            │                       │                      │
+  mlb_etl/ nba_etl/    nfl_etl/            nhl_etl/       weather_toronto_etls/
+  │          │            │                       │                      │
+  │ MLB API  │ NBA Stats  │  NFLVerse             │  NHL API             │  Environment Canada
+  │ Savant   │  → stg.*   │  ESPN / Odds API      │  → staging.*         │  → observations
+  │ Open-Meteo → proj.*   │  → stg_* / dim_*      │                      │  → nwp forecasts
+  │ ESPN     │  → feat.*  │  → fact_* / agg_*     │                      │
+  │          │            │                       │                      │
+  └────┬─────┴────────────┴───────────┬───────────┴──────────────────────┘
+       │                              │
+       ▼                              ▼
+  PostgreSQL (100.68.208.24)     Dagster Daemon (100.103.143.89)
+  ├── mlb_research                  Schedules, sensors, runs
+  ├── nba_research
+  ├── nfl_analytics_dev
+  └── ...
 ```
+
+## MLB ETL — Pipeline Detail
+
+Three-stage architecture: **Live** (pollable) → **Intermediary** (48 h hold for stat corrections) → **Historical** (immutable).
+
+| Source | Data | Cost |
+|--------|------|------|
+| **MLB Stats API** | Schedule, rosters, game feeds, standings, boxscores, umpires | Free |
+| **ESPN API** | Live scoreboard / game state detection | Free |
+| **Baseball Savant** | Pitch-level Statcast (via pybaseball) | Free |
+| **Open-Meteo** | Park-specific weather forecasts | Free |
+
+| Schedule | Cron (ET) | Job | What it does |
+|----------|-----------|-----|--------------|
+| `mlb_reference_schedule` | 10:00 AM | `mlb_reference_job` | Teams, players, seasons |
+| `mlb_pregame_schedule` | 10:30 AM | `mlb_pregame_job` | Schedule, probable pitchers, bullpen, umpires |
+| `mlb_originator_schedule` | 11:00 AM | `mlb_originator_job` | Platoon splits, BvP, umpire zones, game lines, prop projections |
+| `mlb_postgame_night_schedule` | 11:00 PM | `mlb_postgame_ingestion_job` | Promote Final games to intermediary |
+| `mlb_historical_promotion_schedule` | 3:00 AM | `mlb_historical_promotion_job` | Promote verified intermediary → historical |
+| `mlb_stat_corrections_schedule` | Every 6 h | `mlb_stat_corrections_job` | Re-fetch boxscores, diff stat changes |
+
+**30 assets** across 5 groups (`mlb_pregame`, `mlb_live`, `mlb_postgame`, `mlb_projections`, `mlb_analytics`), 13 jobs, 13 schedules.
 
 ## NBA ETL — Pipeline Detail
 
@@ -95,6 +119,14 @@ NBA Stats API → staging.player_game_stats     (1.4M+ rows)
 dagster_workspace/
 ├── workspace.yaml              # Dagster workspace config (lists active modules)
 ├── .gitmodules                 # Submodule definitions
+├── mlb_etl/                    # [submodule] MLB three-stage pipeline + Originator
+│   ├── __init__.py             # Dagster Definitions (load_assets_from_modules)
+│   ├── data_sources.py         # MLB Stats API, ESPN, Statcast clients
+│   ├── assets/                 # pregame, live, postgame, originator, backtesting
+│   ├── backend/db/             # SQLAlchemy models (38), session, persistence
+│   ├── scripts/                # init_db, backfill_*, check_tables
+│   ├── jobs.py
+│   └── schedules.py
 ├── nba_etl/                    # [submodule] NBA ingestion + features
 │   ├── nba_etl/
 │   │   ├── __init__.py         # Dagster Definitions
