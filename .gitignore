@@ -1,1 +1,81 @@
-.telemetry/id.yaml
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ── Packaging / build ──────────────────────────────────
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+sdist/
+wheels/
+.installed.cfg
+
+# ── Virtual environments ───────────────────────────────
+.venv/
+venv/
+ENV/
+env/
+
+# ── uv ─────────────────────────────────────────────────
+.uv/
+uv.lock
+
+# ── Environment / secrets ──────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+
+# ── Dagster local artifacts ────────────────────────────
+.dagster/
+storage/
+history/
+logs/
+schedules/
+
+# ── Dagster telemetry / internal ───────────────────────
+.telemetry/
+.logs_queue/
+.nux/
+
+# ── IDE ────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# ── Testing / linting ─────────────────────────────────
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ── Jupyter ────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── Data files ─────────────────────────────────────────
+*.csv
+*.parquet
+*.pkl
+*.pickle
+*.joblib
+
+# ── OS ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Logs ───────────────────────────────────────────────
+*.log
